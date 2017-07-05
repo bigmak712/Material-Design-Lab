@@ -17,6 +17,7 @@ import com.codepath.android.lollipopexercise.models.Contact;
 import java.util.List;
 
 
+
 public class ContactsActivity extends AppCompatActivity {
     private RecyclerView rvContacts;
     private ContactsAdapter mAdapter;
