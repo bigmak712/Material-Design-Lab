@@ -1,10 +1,13 @@
 package com.codepath.android.lollipopexercise.activities;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.transition.Transition;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,6 +26,8 @@ public class DetailsActivity extends AppCompatActivity {
     private TextView tvName;
     private TextView tvPhone;
     private View vPalette;
+    private FloatingActionButton fab;
+    private Transition.TransitionListener mEnterTransitionListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +38,7 @@ public class DetailsActivity extends AppCompatActivity {
         tvName = (TextView) findViewById(R.id.tvName);
         tvPhone = (TextView) findViewById(R.id.tvPhone);
         vPalette = findViewById(R.id.vPalette);
+        fab = (FloatingActionButton)findViewById(R.id.fab);
 
         // Extract contact from bundle
         mContact = (Contact)getIntent().getExtras().getSerializable(EXTRA_CONTACT);
@@ -41,6 +47,18 @@ public class DetailsActivity extends AppCompatActivity {
         Glide.with(DetailsActivity.this).load(mContact.getThumbnailDrawable()).centerCrop().into(ivProfile);
         tvName.setText(mContact.getName());
         tvPhone.setText(mContact.getNumber());
+
+        // Dial contact's number.
+        // This shows the dialer with the number, allowing you to explicitly initiate the call.
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String uri = "tel:" + mContact.getNumber();
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse(uri));
+                startActivity(intent);
+            }
+        });
 
         // Use Glide to get a callback with a Bitmap which can then
         // be used to extract a vibrant color from the Palette.
@@ -72,17 +90,6 @@ public class DetailsActivity extends AppCompatActivity {
         ivProfile.setTag(target);
         // Instruct Picasso to load the bitmap into the target defined above
         Glide.with(this).load(mContact.getThumbnailDrawable()).asBitmap().centerCrop().into(target);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            // Respond to the action bar's Up/Home button
-            case android.R.id.home:
-                supportFinishAfterTransition();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
 }
